@@ -1,9 +1,10 @@
 # OnionNet
-A multiple-layer inter-molecular contact based deep neural network for protein-ligand binding affinity prediction. The testing set is CASF-2013 benchmark. The protein-ligand binding affinity is directly predicted.
+A multiple-layer inter-molecular contact based deep neural network for protein-ligand binding affinity prediction.
+The testing set is CASF-2013 benchmark and PDBbind v2016 coreset. The protein-ligand binding affinity is directly predicted.
 
-The model could be applied for re-scoring the AutoDock Vina results.
+The model could be applied for re-scoring the docking results.
 
-<img src="./datasets/TOC.png" alt="DNN aided protein-ligand binding affinity prediction and docking rescoring">
+<img src="./datasets/TOC.png" alt="CNN aided protein-ligand binding affinity prediction and docking rescoring">
 
 
 ## Contact
@@ -12,7 +13,8 @@ The model could be applied for re-scoring the AutoDock Vina results.
 
 
 ## Citation
-Coming soon ... ...
+<a href='https://arxiv.org/abs/1906.02418'>Zheng L, Fan J, Mu Y. OnionNet: a multiple-layer inter-molecular contact based convolutional
+neural network for protein-ligand binding affinity prediction[J]. arXiv preprint arXiv:1906.02418, 2019. </a>
 
 
 ## Installation
@@ -25,7 +27,6 @@ Dependecies:
     scipy  
     pandas 
     scikit-learn
-    mpi4py
     mdtraj 
     tensorflow
 
@@ -37,8 +38,13 @@ To install necessary environment, create a new env with conda commands
     cd onionnet
 
     # create a new pearsonal conda environment
-    conda env create -f onionnet_environments.yml 
+    conda create -n onionnet python=3.6
     conda activate onionnet
+
+    # install necessary packages
+    conda install -c anaconda scipy numpy pandas
+    conda install tensorflow
+    conda install -c omnia mdtraj
     
     # do some tests now
     python generate_features.py -h
@@ -60,10 +66,7 @@ Using the "generate_features.py" script to generate the features for OnionNet pr
     python generate_features.py -h
     python generate_features.py -inp input_complexes.dat -out output_features.csv
 
-    # or run the script with MPI, cpu 4 cores
-    mpirun -np 4 python generate_features.py -inp input_complexes.dat -out output_features.py 
-
-The input file contatins the absolute or relative pathes of the protein-ligand complexes pdb files.
+The input file contains the absolute or the path of the protein-ligand complexes pdb files.
 The content of the "input_complexes.dat" file could be:
  
     ./10gs/10gs_complex.pdb
@@ -75,11 +78,14 @@ Or:
     /home/liangzhen/PDBBind_v2018/1a28/1a28_dockingpose.pdb
 
 
+Note: make sure you only cat one receptor with one docking pose into a complex file.
+
+
 ### 3. Predict the pKa of the complexes
 Given a dataset containing the multiple-layer inter-molecular contact features, we could predict
 the binding affinities (in pKa scale). 
 
     python predict_pKa.py -h
-    python predict_pKa.py -model OnionNet_HFree.model -scaler StandardScaler.model -inp features.csv -out output_predicted_pKa.csv
+    python predict_pKa.py -model OnionNet_HFree.model -scaler StandardScaler.model -fn features.csv -out output_predicted_pKa.csv
 
 
